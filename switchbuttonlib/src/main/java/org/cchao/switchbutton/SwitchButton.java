@@ -41,6 +41,8 @@ public class SwitchButton extends View {
 
     private Paint paint;
     private RectF rectF;
+    private RectF leftArcRectF;
+    private RectF rightArcRectF;
 
     private int width;
     private int height;
@@ -91,12 +93,17 @@ public class SwitchButton extends View {
             width = getWidth();
             height = getHeight();
             rectF = new RectF(0, 0, width, height);
+            leftArcRectF = new RectF(0, 0, height, height);
+            rightArcRectF = new RectF(width - height, 0, width, height);
             buttonRadius = height - 2 * padding >> 1;
             minCurrentX = buttonRadius + padding;
             maxCurrentX = width - buttonRadius - padding;
         }
+
+        //绘制底部背景色
         paint.setColor(checking ? selectedColor : unSelectedColor);
         canvas.drawRoundRect(rectF, height >> 1, height >> 1, paint);
+
         float x = minCurrentX;
         if (currentX >= x) {
             x = currentX;
@@ -111,10 +118,28 @@ public class SwitchButton extends View {
             paint.setColor(unSelectedColor);
             canvas.drawRoundRect(rectF, height >> 1, height >> 1, paint);
         }
+
+        //滑动过程中
+        if (currentX > minCurrentX && currentX < maxCurrentX) {
+            if (checking) {
+                paint.setColor(unSelectedColor);
+                //画圆弧
+                canvas.drawArc(rightArcRectF, -90, 180, true, paint);
+                canvas.drawRect(currentX, 0, width - height / 2, height, paint);
+            } else {
+                paint.setColor(selectedColor);
+                //画圆弧
+                canvas.drawArc(leftArcRectF, 90, 180, true, paint);
+                canvas.drawRect(height >> 1, 0, currentX, height, paint);
+            }
+        }
+
+        //绘制按钮
         paint.setColor(buttonColor);
         canvas.drawCircle(x, minCurrentX, buttonRadius, paint);
 
         if (isScrolling) {
+            //自动滑动过程中
             if (toRight) {
                 currentX += eachScroll;
             } else {
@@ -130,6 +155,7 @@ public class SwitchButton extends View {
             }
             invalidate();
         } else {
+            //滑动完成
             if (checking && x <= minCurrentX) {
                 checking = false;
                 if (onSwitchChangeListener != null) {
@@ -193,6 +219,10 @@ public class SwitchButton extends View {
         return checking;
     }
 
+    /**
+     * 设置选中与不选中
+     * @param check
+     */
     public void setChecked(boolean check) {
         if (checking == check) {
             return;
