@@ -31,6 +31,9 @@ public class SwitchButton extends View {
     //选择按钮padding
     private int padding;
 
+    //回弹比例
+    private int springback;
+
     //当前是否选中
     private boolean checking = false;
 
@@ -81,6 +84,7 @@ public class SwitchButton extends View {
         buttonColor = typedArray.getColor(R.styleable.SwitchButton_switchButton_color, Color.WHITE);
         padding = typedArray.getDimensionPixelSize(R.styleable.SwitchButton_switchButton_padding
                 , (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
+        springback = typedArray.getInt(R.styleable.SwitchButton_switchButton_springback, 3);
         typedArray.recycle();
 
         paint = new Paint();
@@ -202,7 +206,13 @@ public class SwitchButton extends View {
     }
 
     private void reset() {
-        toRight = (currentX >= width / 2);
+        if (checking) {
+            //选中时左滑距离小于四分之一可滑动距离则回弹
+            toRight = (currentX- buttonRadius >= (width - buttonRadius * 2 - (width - buttonRadius * 2 ) / springback));
+        } else {
+            //未选中时右滑距离小于四分之一可滑动距离泽回弹
+            toRight = (currentX - buttonRadius >= (width - buttonRadius * 2 ) / springback);
+        }
         if (toRight) {
             eachScroll = (maxCurrentX - currentX) / 10;
         } else {
