@@ -193,7 +193,7 @@ public class SwitchButton extends View {
         return checking;
     }
 
-    public void setCheck(boolean check) {
+    public void setChecked(boolean check) {
         if (checking == check) {
             return;
         }
@@ -209,7 +209,7 @@ public class SwitchButton extends View {
     }
 
     public void toggle() {
-        setCheck(!checking);
+        setChecked(!checking);
     }
 
     public int getSelectedColor() {
