@@ -84,7 +84,7 @@ public class SwitchButton extends View {
         buttonColor = typedArray.getColor(R.styleable.SwitchButton_switchButton_color, Color.WHITE);
         padding = typedArray.getDimensionPixelSize(R.styleable.SwitchButton_switchButton_padding
                 , (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
-        springback = typedArray.getInt(R.styleable.SwitchButton_switchButton_springback, 3);
+        springback = typedArray.getInt(R.styleable.SwitchButton_switchButton_springback, 6);
         typedArray.recycle();
 
         paint = new Paint();

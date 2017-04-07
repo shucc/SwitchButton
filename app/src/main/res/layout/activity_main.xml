@@ -19,6 +19,15 @@
         android:text="点击切换上方SwitchButton"/>
 
     <org.cchao.switchbutton.SwitchButton
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        app:switchButton_springback="6"
+        app:switchButton_color="@android:color/white"
+        app:switchButton_selectedColor="#e4e4e4"
+        app:switchButton_unSelectedColor="#00c832"/>
+
+    <org.cchao.switchbutton.SwitchButton
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
