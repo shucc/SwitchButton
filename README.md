@@ -4,6 +4,23 @@
 
 ## Gradle
 
+在项目的build.gradle中添加:
+```groovy
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+在使用库的module中添加:
+```groovy
+dependencies {
+    compile 'com.github.shucc:SwitchButton:v1.0'
+}
+```
+
 ## Attributes
 
 |name|format|description|
