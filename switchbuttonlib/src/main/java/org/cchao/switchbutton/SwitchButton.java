@@ -10,6 +10,9 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.Transformation;
 
 /**
  * Created by shucc on 17/4/6.
@@ -33,6 +36,9 @@ public class SwitchButton extends View {
 
     //回弹比例
     private int springback;
+
+    //动画时间
+    private int duration;
 
     //是否可以滑动
     private boolean canMove;
@@ -65,12 +71,6 @@ public class SwitchButton extends View {
     //按钮圆心距离左侧最大距离
     private float maxCurrentX;
 
-    //自动滑动时每次移动距离
-    private float eachScroll;
-
-    //是否向右自动滑动
-    private boolean toRight;
-
     public SwitchButton(Context context) {
         this(context, null);
     }
@@ -88,6 +88,7 @@ public class SwitchButton extends View {
         buttonColor = typedArray.getColor(R.styleable.SwitchButton_switchButton_color, Color.WHITE);
         padding = typedArray.getDimensionPixelSize(R.styleable.SwitchButton_switchButton_padding
                 , (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
+        duration = typedArray.getInt(R.styleable.SwitchButton_switchButton_duration, 300);
         springback = typedArray.getInt(R.styleable.SwitchButton_switchButton_springback, 6);
         typedArray.recycle();
 
@@ -147,21 +148,16 @@ public class SwitchButton extends View {
         canvas.drawCircle(x, minCurrentX, buttonRadius, paint);
 
         if (isScrolling) {
-            //自动滑动过程中
-            if (toRight) {
-                currentX += eachScroll;
-            } else {
-                currentX -= eachScroll;
-            }
+            //已经滑动到最左边
             if (currentX <= minCurrentX) {
                 currentX = minCurrentX;
                 isScrolling = false;
             }
+            //已经滑动到最右边
             if (currentX >= maxCurrentX) {
                 currentX = maxCurrentX;
                 isScrolling = false;
             }
-            invalidate();
         } else {
             //滑动完成
             if (checking && x <= minCurrentX) {
@@ -201,11 +197,11 @@ public class SwitchButton extends View {
                 if (canMove) {
                     if (currentX <= minCurrentX || currentX >= maxCurrentX) {
                         return false;
-                    } else {
+                    } else if (!isScrolling) {
                         isScrolling = true;
                         reset();
                     }
-                } else {
+                } else if (!isScrolling) {
                     toggle();
                 }
                 break;
@@ -216,6 +212,7 @@ public class SwitchButton extends View {
     }
 
     private void reset() {
+        boolean toRight;
         if (checking) {
             //选中时左滑距离小于四分之一可滑动距离则回弹
             toRight = (currentX- buttonRadius >= (width - buttonRadius * 2 - (width - buttonRadius * 2 ) / springback));
@@ -223,12 +220,10 @@ public class SwitchButton extends View {
             //未选中时右滑距离小于四分之一可滑动距离泽回弹
             toRight = (currentX - buttonRadius >= (width - buttonRadius * 2 ) / springback);
         }
-        if (toRight) {
-            eachScroll = (maxCurrentX - currentX) / 10;
-        } else {
-            eachScroll = (currentX - minCurrentX) / 10;
-        }
-        postInvalidate();
+        float distance = toRight ? maxCurrentX - currentX : currentX - minCurrentX;
+        SwitchButtonAnim anim = new SwitchButtonAnim(toRight, distance);
+        anim.setDuration((long) (distance * duration / (maxCurrentX - minCurrentX)));
+        startAnimation(anim);
     }
 
     public void setOnSwitchChangeListener(OnSwitchChangeListener onSwitchChangeListener) {
@@ -247,15 +242,18 @@ public class SwitchButton extends View {
         if (checking == check) {
             return;
         }
-        isScrolling = true;
-        toRight = check;
-        eachScroll = (maxCurrentX - minCurrentX) / 20;
-        if (check) {
-            currentX = minCurrentX;
-        } else {
-            currentX = maxCurrentX;
+        if (isScrolling) {
+            return;
         }
-        postInvalidate();
+        isScrolling = true;
+        if (checking) {
+            currentX = maxCurrentX;
+        } else {
+            currentX = minCurrentX;
+        }
+        SwitchButtonAnim anim = new SwitchButtonAnim(check, maxCurrentX - minCurrentX);
+        anim.setDuration(duration);
+        startAnimation(anim);
     }
 
     public void toggle() {
@@ -302,7 +300,53 @@ public class SwitchButton extends View {
         this.padding = padding;
     }
 
+    /**
+     * 按钮自动滑动动画
+     */
+    private class SwitchButtonAnim extends Animation {
+
+        //需要移动距离
+        private float maxDistance;
+
+        //是否右移
+        private boolean toRight;
+
+        //当前左侧距离
+        private float initCurrentX;
+
+        /**
+         *
+         * @param toRight
+         *      是否向右滑动
+         * @param maxDistance
+         *      滑动的间距
+         */
+        public SwitchButtonAnim(boolean toRight, float maxDistance) {
+            this.toRight = toRight;
+            this.maxDistance = maxDistance;
+            //TODO 防止重复动画
+            initCurrentX = currentX + (toRight ? 0.01f : -0.01f);
+        }
+
+        @Override
+        public void initialize(int width, int height, int parentWidth, int parentHeight) {
+            setInterpolator(new LinearInterpolator());
+            super.initialize(width, height, parentWidth, parentHeight);
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            super.applyTransformation(interpolatedTime, t);
+            if (toRight) {
+                currentX = initCurrentX + maxDistance * interpolatedTime;
+            } else {
+                currentX = initCurrentX - maxDistance * interpolatedTime;
+            }
+            postInvalidate();
+        }
+    }
+
     public interface OnSwitchChangeListener {
-        void onChange(boolean isSelect);
+        void onChange(boolean isChecked);
     }
 }

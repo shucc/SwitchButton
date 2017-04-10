@@ -13,7 +13,11 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getName();
 
-    private SwitchButton switchButton;
+    private SwitchButton switchButton1;
+
+    private SwitchButton switchButton2;
+
+    private SwitchButton switchButton3;
 
     private Button button;
 
@@ -22,19 +26,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        switchButton = (SwitchButton) findViewById(R.id.switchButton);
+        switchButton1 = (SwitchButton) findViewById(R.id.switchButton1);
+        switchButton2 = (SwitchButton) findViewById(R.id.switchButton2);
+        switchButton3 = (SwitchButton) findViewById(R.id.switchButton3);
         button = (Button) findViewById(R.id.button);
 
-        switchButton.setOnSwitchChangeListener(new SwitchButton.OnSwitchChangeListener() {
+        switchButton3.setOnSwitchChangeListener(new SwitchButton.OnSwitchChangeListener() {
             @Override
-            public void onChange(boolean isSelect) {
-                Log.d(TAG, "onChange: " + isSelect);
+            public void onChange(boolean isChecked) {
+                Log.d(TAG, "onChange: " + isChecked);
             }
         });
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchButton.setChecked(!switchButton.isChecked());
+                switchButton1.setChecked(!switchButton1.isChecked());
+                switchButton2.setChecked(!switchButton2.isChecked());
+                switchButton3.setChecked(!switchButton3.isChecked());
             }
         });
     }

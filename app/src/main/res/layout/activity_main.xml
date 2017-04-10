@@ -7,19 +7,13 @@
     android:padding="16dp">
 
     <org.cchao.switchbutton.SwitchButton
-        android:id="@+id/switchButton"
+        android:id="@+id/switchButton1"
         android:layout_width="100dp"
         android:layout_height="40dp"
         app:switchButton_move="true"/>
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:text="点击切换上方SwitchButton"/>
-
     <org.cchao.switchbutton.SwitchButton
+        android:id="@+id/switchButton2"
         android:layout_width="60dp"
         android:layout_height="30dp"
         android:layout_marginTop="8dp"
@@ -29,10 +23,17 @@
         app:switchButton_unSelectedColor="#00c832"/>
 
     <org.cchao.switchbutton.SwitchButton
+        android:id="@+id/switchButton3"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
-        app:switchButton_springback="4"
-        app:switchButton_move="true"/>
+        app:switchButton_duration="2000"/>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:text="点击切换上方SwitchButton"/>
 
 </LinearLayout>

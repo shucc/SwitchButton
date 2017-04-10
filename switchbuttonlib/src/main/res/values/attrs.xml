@@ -6,6 +6,7 @@
         <attr name="switchButton_unSelectedColor" format="color" />
         <attr name="switchButton_color" format="color" />
         <attr name="switchButton_padding" format="dimension" />
+        <attr name="switchButton_duration" format="integer" />
         <attr name="switchButton_springback" format="integer" />
     </declare-styleable>
 </resources>

@@ -17,7 +17,7 @@ allprojects {
 在使用库的module中添加:
 ```groovy
 dependencies {
-    compile 'com.github.shucc:SwitchButton:v1.0'
+    compile 'com.github.shucc:SwitchButton:v1.1'
 }
 ```
 
@@ -30,6 +30,7 @@ dependencies {
 | switchButton_unSelectedColor | color | 未选中部分背景色
 | switchButton_color | color | 开关按钮颜色
 | switchButton_padding | dimension | 开关按钮距离顶部底部间距
+| switchButton_duration | integer | 按钮切换动画时间，默认300ms
 | switchButton_springback | int | 判断自动回弹距离设置，默认为6，表示滑动距离小于1/6可滑动距离则回弹，只有switchButton_move设置为TRUE该属性才生效
 
 ## Demo
