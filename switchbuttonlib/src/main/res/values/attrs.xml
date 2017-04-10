@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="SwitchButton">
+        <attr name="switchButton_move" format="boolean" />
         <attr name="switchButton_selectedColor" format="color" />
         <attr name="switchButton_unSelectedColor" format="color" />
         <attr name="switchButton_color" format="color" />

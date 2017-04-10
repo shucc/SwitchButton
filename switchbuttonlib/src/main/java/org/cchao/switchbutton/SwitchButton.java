@@ -34,6 +34,9 @@ public class SwitchButton extends View {
     //回弹比例
     private int springback;
 
+    //是否可以滑动
+    private boolean canMove;
+
     //当前是否选中
     private boolean checking = false;
 
@@ -79,6 +82,7 @@ public class SwitchButton extends View {
     public SwitchButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.SwitchButton, defStyleAttr, 0);
+        canMove = typedArray.getBoolean(R.styleable.SwitchButton_switchButton_move, false);
         selectedColor = typedArray.getColor(R.styleable.SwitchButton_switchButton_selectedColor, Color.RED);
         unSelectedColor = typedArray.getColor(R.styleable.SwitchButton_switchButton_unSelectedColor, Color.GRAY);
         buttonColor = typedArray.getColor(R.styleable.SwitchButton_switchButton_color, Color.WHITE);
@@ -184,19 +188,25 @@ public class SwitchButton extends View {
                 currentX = event.getX();
                 return true;
             case MotionEvent.ACTION_MOVE:
-                currentX = event.getX();
-                if (currentX <= minCurrentX || currentX >= maxCurrentX) {
-                    return false;
+                if (canMove) {
+                    currentX = event.getX();
+                    if (currentX <= minCurrentX || currentX >= maxCurrentX) {
+                        return false;
+                    }
+                    postInvalidate();
                 }
-                postInvalidate();
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (currentX <= minCurrentX || currentX >= maxCurrentX) {
-                    return false;
+                if (canMove) {
+                    if (currentX <= minCurrentX || currentX >= maxCurrentX) {
+                        return false;
+                    } else {
+                        isScrolling = true;
+                        reset();
+                    }
                 } else {
-                    isScrolling = true;
-                    reset();
+                    toggle();
                 }
                 break;
             default:
@@ -250,6 +260,14 @@ public class SwitchButton extends View {
 
     public void toggle() {
         setChecked(!checking);
+    }
+
+    public void setCanMove(boolean canMove) {
+        this.canMove = canMove;
+    }
+
+    public boolean isCanMove() {
+        return canMove;
     }
 
     public int getSelectedColor() {
