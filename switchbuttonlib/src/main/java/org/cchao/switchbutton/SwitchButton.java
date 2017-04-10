@@ -37,6 +37,9 @@ public class SwitchButton extends View {
     //回弹比例
     private int springback;
 
+    //是否有颜色渐变效果
+    private boolean canGradient;
+
     //动画时间
     private int duration;
 
@@ -83,6 +86,7 @@ public class SwitchButton extends View {
         super(context, attrs, defStyleAttr);
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.SwitchButton, defStyleAttr, 0);
         canMove = typedArray.getBoolean(R.styleable.SwitchButton_switchButton_move, false);
+        canGradient = typedArray.getBoolean(R.styleable.SwitchButton_switchButton_gradient, false);
         selectedColor = typedArray.getColor(R.styleable.SwitchButton_switchButton_selectedColor, Color.RED);
         unSelectedColor = typedArray.getColor(R.styleable.SwitchButton_switchButton_unSelectedColor, Color.GRAY);
         buttonColor = typedArray.getColor(R.styleable.SwitchButton_switchButton_color, Color.WHITE);
@@ -128,18 +132,20 @@ public class SwitchButton extends View {
             canvas.drawRoundRect(rectF, height >> 1, height >> 1, paint);
         }
 
-        //滑动过程中
-        if (currentX > minCurrentX && currentX < maxCurrentX) {
-            if (checking) {
-                paint.setColor(unSelectedColor);
-                //画圆弧
-                canvas.drawArc(rightArcRectF, -90, 180, true, paint);
-                canvas.drawRect(currentX, 0, width - height / 2, height, paint);
-            } else {
-                paint.setColor(selectedColor);
-                //画圆弧
-                canvas.drawArc(leftArcRectF, 90, 180, true, paint);
-                canvas.drawRect(height >> 1, 0, currentX, height, paint);
+        if (canGradient) {
+            //滑动过程中
+            if (currentX > minCurrentX && currentX < maxCurrentX) {
+                if (checking) {
+                    paint.setColor(unSelectedColor);
+                    //画圆弧
+                    canvas.drawArc(rightArcRectF, -90, 180, true, paint);
+                    canvas.drawRect(currentX, 0, width - height / 2, height, paint);
+                } else {
+                    paint.setColor(selectedColor);
+                    //画圆弧
+                    canvas.drawArc(leftArcRectF, 90, 180, true, paint);
+                    canvas.drawRect(height >> 1, 0, currentX, height, paint);
+                }
             }
         }
 
@@ -237,8 +243,20 @@ public class SwitchButton extends View {
     /**
      * 设置选中与不选中
      * @param check
+     *      是否选中
      */
     public void setChecked(boolean check) {
+        setChecked(check, false);
+    }
+
+    /**
+     * 设置选中与不选中
+     * @param check
+     *      是否选中
+     * @param hasAnim
+     *      是否有切换动画
+     */
+    public void setChecked(final boolean check, boolean hasAnim) {
         if (checking == check) {
             return;
         }
@@ -251,13 +269,34 @@ public class SwitchButton extends View {
         } else {
             currentX = minCurrentX;
         }
-        SwitchButtonAnim anim = new SwitchButtonAnim(check, maxCurrentX - minCurrentX);
-        anim.setDuration(duration);
-        startAnimation(anim);
+        if (!hasAnim) {
+            //TODO 不延时初始设置有问题
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checking = check;
+                    if (check) {
+                        currentX = maxCurrentX;
+                    } else {
+                        currentX = minCurrentX;
+                    }
+                    isScrolling = true;
+                    if (onSwitchChangeListener != null) {
+                        onSwitchChangeListener.onChange(checking);
+                    }
+                    postInvalidate();
+                }
+            }, 17);
+        }
+        if (hasAnim) {
+            SwitchButtonAnim anim = new SwitchButtonAnim(check, maxCurrentX - minCurrentX);
+            anim.setDuration(duration);
+            startAnimation(anim);
+        }
     }
 
     public void toggle() {
-        setChecked(!checking);
+        setChecked(!checking, true);
     }
 
     public void setCanMove(boolean canMove) {
@@ -266,6 +305,14 @@ public class SwitchButton extends View {
 
     public boolean isCanMove() {
         return canMove;
+    }
+
+    public void setCanGradient(boolean canGradient) {
+        this.canGradient = canGradient;
+    }
+
+    public boolean isCanGradient() {
+        return canGradient;
     }
 
     public int getSelectedColor() {

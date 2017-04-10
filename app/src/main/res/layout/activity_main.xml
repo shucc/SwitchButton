@@ -27,7 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
-        app:switchButton_duration="2000"/>
+        app:switchButton_duration="2000"
+        app:switchButton_gradient="true"/>
 
     <Button
         android:id="@+id/button"

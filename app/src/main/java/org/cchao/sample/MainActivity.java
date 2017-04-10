@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import org.cchao.switchbutton.SwitchButton;
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
         switchButton3 = (SwitchButton) findViewById(R.id.switchButton3);
         button = (Button) findViewById(R.id.button);
 
+        switchButton3.setChecked(true);
+
         switchButton3.setOnSwitchChangeListener(new SwitchButton.OnSwitchChangeListener() {
             @Override
             public void onChange(boolean isChecked) {
@@ -41,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 switchButton1.setChecked(!switchButton1.isChecked());
-                switchButton2.setChecked(!switchButton2.isChecked());
+                switchButton2.toggle();
                 switchButton3.setChecked(!switchButton3.isChecked());
             }
         });
