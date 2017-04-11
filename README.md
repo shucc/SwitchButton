@@ -17,7 +17,7 @@ allprojects {
 在使用库的module中添加:
 ```groovy
 dependencies {
-    compile 'com.github.shucc:SwitchButton:v1.2'
+    compile 'com.github.shucc:SwitchButton:v1.3'
 }
 ```
 
